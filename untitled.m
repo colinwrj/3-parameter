@@ -1,6 +1,6 @@
 clear;
-figure(1) 
-clf;shg
+figure(1);
+clf;shg;
 warning('off');
 m = 1;
 iter = 1;
@@ -73,7 +73,7 @@ for i = t_interval:t_interval:t_max
     dx2 = sum(dx.^2,2);
     dx = sqrt(mean(dx2));
     y2 = [y2 1/dx];
-    EB = [EB 1/std(sqrt(dx2))/sqrt(n)];
+    EB = [EB std(1/sqrt(dx2))/sqrt(n)];
 end
 
 errorbar(xx,y2,EB,'.');

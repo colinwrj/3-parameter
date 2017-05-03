@@ -1,12 +1,12 @@
 %clear;
 warning('off');
-m = 3;
-iter = 3;
+m = 1;
+iter = 1;
 x0 = [1 pi/3 pi/6];
-xt = [0.01 0.01 0.01];
+xt = [1 pi/3 pi/6];
 t = 1;
 n_p = 10000;
-n = 100;
+n = 1000;
 
 s_x = [];
 s_cov = [];
@@ -36,6 +36,12 @@ end
 dx = s_xt - repmat(x_ideal,size(s_xt,1),1);
 dx2 = sum(dx.^2,2);
 mean(dx2)
+dx_origin = s_x - repmat(x0,size(s_x,1),1);
+dx = s_xt - repmat(x_ideal,size(s_xt,1),1);
+f1 = 1./(dx_origin(:,1).^2);
+f1_mean = mean(f1);
+f1_std = std(f1);
+f1_EB = f1_std / sqrt(n);
 
 cov
 

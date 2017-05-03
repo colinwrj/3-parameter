@@ -1,4 +1,4 @@
-function [x,delta] = simu(m,iter,x0,xt,t,n_p)
+function [x,delta,Js] = simu(m,iter,x0,xt,t,n_p)
 
     %x0 represent the parameters` true value
     %xt represent the parameters` estimated value
@@ -6,7 +6,7 @@ function [x,delta] = simu(m,iter,x0,xt,t,n_p)
     %x10 = 1;
     %x20 = pi/3;
     %x30 = pi/6;
-    t0 = 1;  %t represent total time
+    %t0 = 1;  %t represent total time
     %m = 5;  %m represent the number of control
     %t = 1;
     %x0 = [x10 x20 x30];
@@ -14,9 +14,9 @@ function [x,delta] = simu(m,iter,x0,xt,t,n_p)
     %x2 = 0.01;
     %x3 = 0.01;
     %xt = [x1 x2 x3];
-    dx1 = [0.0001 0 0];
-    dx2 = [0 0.0001 0];
-    dx3 = [0 0 0.0001];
+    dx1 = [0.001 0 0];
+    dx2 = [0 0.001 0];
+    dx3 = [0 0 0.001];
     %H0 = H(xt);
     %iter = 10;
     n0 = n_p / iter;
@@ -49,7 +49,7 @@ function [x,delta] = simu(m,iter,x0,xt,t,n_p)
 
 
         %final state
-        p_out = p(m,p_in,x0,xt,t0);
+        p_out = p(m,p_in,x0,xt,t);
 
         %calculate the possiblity
         p1 = real(trace(E1*p_out));
@@ -64,6 +64,7 @@ function [x,delta] = simu(m,iter,x0,xt,t,n_p)
         fun = @(y)myfun(y,m,s_n,s_xt,phi0,t);
         options = optimoptions('fminunc','Display','off');
         x = fminunc(fun,s_xt(i,:),options);
+        %x = fminunc(fun,s_xt(i,:));
         s_xt = [s_xt;x];
         xt = x;
     
@@ -71,9 +72,10 @@ function [x,delta] = simu(m,iter,x0,xt,t,n_p)
         
 
 
-        J1 = J(m,x0,x,dx1,t0);
-        J2 = J(m,x0,x,dx2,t0);
-        J3 = J(m,x0,x,dx3,t0);
+        J1 = J(m,x,x,dx1,t);
+        J2 = J(m,x,x,dx2,t);
+        J3 = J(m,x,x,dx3,t);
+        Js = [J1 J2 J3];
         %Jmax = J1+J2+J3;
         %cov = 1/n_p/Jmax;
         delta = 1/J1+1/J2*x(1)^2+1/J3*x(1)^2*sin(x(2))^2;
